@@ -1,11 +1,11 @@
-# BOSS直聘爬虫 · 职位抓取工具 v2.1（Chrome CDP / 明文薪资）
+# BOSS直聘爬虫 · 职位采集与求职决策 Agent v2.2（Chrome CDP / 明文薪资）
 
 > 🌐 English documentation: [README.en.md](./README.en.md)
 
 ![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey.svg)
-![Version](https://img.shields.io/badge/version-2.1.0-orange.svg)
+![Version](https://img.shields.io/badge/version-2.2.0-orange.svg)
 
 一个轻量的 **BOSS直聘爬虫（spider / crawler / scraper）**：通过 Chrome DevTools Protocol 连接本地已登录的 Chrome，复用真实登录态调用 zhipin.com 搜索 API，绕过前端字体反爬，输出含**明文薪资**的职位数据（JSON / CSV），并生成薪资分布、技能词频和求职材料优化提示词。同时作为 Hermes Agent Skill 提供。
 
@@ -279,6 +279,30 @@ python3 scripts/boss_cdp_raw.py --keyword "AI Agent" --city 上海 --pages 3 --c
 ## 📌 TODO
 
 - [ ] 详情页抓取补强 Referer 与请求指纹，进一步降低风控触发概率
+
+## 本地求职决策 Agent
+
+v2.2 在保留原有 BOSS CDP 采集能力的基础上，新增独立的 `career_agent` 子系统。它不是自动投递器，而是一个本地优先的求职决策工作台：
+
+```bash
+# 安装 Agent 依赖
+uv sync --extra agent
+
+# 检查数据库和供应商配置（密钥只从环境变量或系统 Keyring 读取）
+uv run jobtrace-agent doctor
+
+# 导入已有 boss_jobs_*.json
+uv run jobtrace-agent import boss_jobs.json
+
+# 解析简历并输出岗位匹配证据
+uv run jobtrace-agent match --resume resume.md --jobs boss_jobs.json --graduation-year 2028
+
+# 启动 Textual TUI 或本地 FastAPI
+uv run jobtrace-agent tui
+uv run jobtrace-agent serve
+```
+
+工作流按「硬条件过滤 -> FTS5 召回 -> 结构化证据核验 -> 可解释排序 -> 简历补丁/沟通草稿」分层。模型不能绕过硬条件，也不能直接发送消息；若未来启用发送适配器，任何外部消息都必须取得用户授权，并逐条展示内容、二次确认、限速和记录审计事件。`career_agent` 只负责新增的决策层，BOSS CDP 采集代码及上游许可证边界保持不变。
 
 ## License
 

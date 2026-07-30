@@ -1205,37 +1205,22 @@ class VersionConsistencyTests(unittest.TestCase):
 
 
 class ProjectScopeTests(unittest.TestCase):
-    """项目边界守卫：只保留抓取和聚合分析，不内置简历匹配打分。"""
+    """项目边界守卫：采集核心与本地决策层分离，外部写操作受确认保护。"""
 
     def _read_text(self, name):
         return (ROOT_PATH / name).read_text(encoding="utf-8")
 
-    def test_resume_matching_feature_is_not_packaged_or_documented(self):
-        self.assertFalse(
-            (ROOT_PATH / "scripts" / "resume_score.py").exists(),
-            "简历匹配打分脚本不应作为项目功能保留",
-        )
-        self.assertFalse(
-            (ROOT_PATH / "tests" / "test_resume_score.py").exists(),
-            "删除简历匹配功能时也应删除对应测试",
-        )
+    def test_decision_layer_is_explicitly_separate_from_scraper_core(self):
+        self.assertTrue((ROOT_PATH / "career_agent" / "matching.py").exists())
+        self.assertTrue((ROOT_PATH / "career_agent" / "sources.py").exists())
+        self.assertIn("career_agent", self._read_text("pyproject.toml"))
+        self.assertIn("用户授权", self._read_text("README.md"))
 
-        combined = "\n".join(
-            self._read_text(name)
-            for name in ("README.md", "CHANGELOG.md", "SKILL.md", "pyproject.toml", "requirements.txt", "uv.lock")
-        )
-        for forbidden in (
-            "resume_score",
-            "pdfplumber",
-            "pypdf",
-            "python-docx",
-            "openai",
-            "langchain",
-            "sentence-transformers",
-            "简历匹配打分",
-            "enable-llm",
-        ):
-            self.assertNotIn(forbidden, combined)
+    def test_external_message_requires_confirmation_guard(self):
+        safety = (ROOT_PATH / "career_agent" / "safety.py").read_text(encoding="utf-8")
+        self.assertIn("message_hash", safety)
+        self.assertIn("ConfirmationError", safety)
+        self.assertNotIn("send_current_message", safety)
 
 
 if __name__ == "__main__":
