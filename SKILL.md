@@ -1,7 +1,7 @@
 ---
 name: boss-zhipin-scraper
 description: "Scrape BOSS直聘 (job listing site) via Chrome CDP. Searches jobs by keyword/city/filters, fetches JD details, outputs structured JSON/CSV with plaintext salary, and can summarize scraped results into a job-market prompt. Use when user wants to search/analyze jobs on BOSS直聘 or zhipin.com."
-version: 2.1.0
+version: 2.2.0
 author: eatmoreduck
 license: MIT
 platforms: [macos, linux]
@@ -10,9 +10,9 @@ metadata:
     tags: [scraper, jobs, career, cdp, chrome, zhipin, boss直聘]
 ---
 
-# BOSS直聘职位抓取工具 v2.1
+# BOSS直聘职位采集与本地求职决策 Agent v2.2
 
-通过 Chrome CDP 协议抓取 BOSS直聘 (zhipin.com) 职位数据，输出结构化 JSON/CSV（含明文薪资），并可对已抓取结果生成聚合摘要和求职材料优化提示词。
+通过 Chrome CDP 协议抓取 BOSS直聘 (zhipin.com) 职位数据，输出结构化 JSON/CSV（含明文薪资），并可通过 `jobtrace-agent` 进行本地、可解释的求职决策和 TUI 浏览。Agent 默认只读；任何消息发送都必须逐条二次确认。
 
 ## 前置条件
 
