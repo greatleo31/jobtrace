@@ -1,11 +1,11 @@
-# BOSS Zhipin Scraper · Job Crawler v2.1 (Chrome CDP / Plaintext Salary)
+# BOSS Zhipin Scraper · Job Collection and Career Decision Agent v2.2 (Chrome CDP / Plaintext Salary)
 
 > 🌐 中文文档：[README.md](./README.md)
 
 ![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey.svg)
-![Version](https://img.shields.io/badge/version-2.1.0-orange.svg)
+![Version](https://img.shields.io/badge/version-2.2.0-orange.svg)
 
 A lightweight **BOSS Zhipin scraper / crawler** (a.k.a. spider) for job listings on [zhipin.com](https://www.zhipin.com). Instead of driving a heavy Selenium/Playwright browser, it connects to your **already-logged-in Chrome** via the Chrome DevTools Protocol (CDP), reuses the real session, and calls the in-page search API directly — bypassing the front-end font-based anti-scraping so you get the **plaintext salary** in every record. Output goes to JSON / CSV, plus an aggregated salary/skill analysis and a copy-paste prompt for polishing your job-application materials. Also ships as a Hermes Agent Skill.
 
@@ -278,6 +278,30 @@ python3 scripts/boss_cdp_raw.py --keyword "AI Agent" --city 上海 --pages 3 --c
 ## 📌 TODO
 
 - [ ] Strengthen the detail-page `Referer` and request fingerprinting to further reduce risk-control triggers
+
+## Local Career Decision Agent
+
+v2.2 keeps the original BOSS CDP collector and adds an independent `career_agent` subsystem. It is a local-first decision workbench, not an auto-application bot:
+
+```bash
+# Install Agent dependencies
+uv sync --extra agent
+
+# Check the database and provider configuration (secrets stay in env/keyring)
+uv run jobtrace-agent doctor
+
+# Import an existing boss_jobs_*.json file
+uv run jobtrace-agent import boss_jobs.json
+
+# Parse a resume and print explainable job matches
+uv run jobtrace-agent match --resume resume.md --jobs boss_jobs.json --graduation-year 2028
+
+# Start the Textual TUI or the local FastAPI adapter
+uv run jobtrace-agent tui
+uv run jobtrace-agent serve
+```
+
+The workflow is layered as hard filters, FTS5 retrieval, structured evidence verification, explainable ranking, and resume/message drafts. The model cannot bypass hard filters or send messages directly. Any future send adapter must show the target and content, require per-message confirmation, apply rate limits, and record audit events. `career_agent` owns only the new decision layer; the BOSS CDP collector and its upstream license boundary remain unchanged.
 
 ## License
 

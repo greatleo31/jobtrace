@@ -3,6 +3,10 @@
 ## 未发布
 
 ### 新增
+- 新增 `career_agent` 本地求职决策子系统：将用户授权的职位 JSON 标准化到 SQLite WAL，使用确定性硬条件过滤、FTS5 召回、结构化证据核验、LangGraph 运行记录和 Textual TUI；新增 `jobtrace-agent doctor/import/match/evaluate/tui/serve` 入口。
+- 新增供应商配置、PDF/DOCX/Markdown 简历解析、50 组可复现评测样本、发送内容哈希确认和不泄露密钥的公开配置视图。BOSS 写操作默认关闭，发送权限不由模型直接决定。
+
+### 新增
 - 新增 `--stop-chrome` 命令：抓取/分析完成后关闭 BOSS 专用 CDP Chrome（按 user-data-dir 精准匹配隔离 profile，不碰主 Chrome）；抓取命令新增 `--close-chrome` 选项，正常结束后自动收尾（默认关闭，异常退出不触发以保留登录态）。复用已有 `stop_cdp_chrome` 的安全匹配逻辑，补齐进程关闭/收尾链路的单元测试。（#26）
 - 城市码表外置为 `data/city_codes.json`（全量 300+ 城市，覆盖一二三四五线），新增 `--list-cities [关键词]` 命令查看支持的城市；`resolve_city` 查询链改为「本地静态码表 → 运行时拉 BOSS 接口 → 原样兜底」。城市码表打进 wheel，`pip install` 用户也可用。（#24）
 
